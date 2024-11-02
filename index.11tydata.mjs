@@ -2,7 +2,8 @@
 // const reg2 = env\('(?<key>.*?)'(, (?<default>.*?))?\)
 import fs from "fs";
 
-const REG = new RegExp(/\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
+const REG = new RegExp(/(\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?)?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
+//const REGEX_DOUBLE_COMMENT = new RegExp(/(?<commentOne>\/\*(.|\n)*?\*\/)( |\n)*?(?<commentTwo>\/\*(.|\n)*?\*\/)/, "g")
 const CACHE_DIR = ".cache/"
 const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "themes.php", "wordpress.php"]
 
@@ -61,7 +62,7 @@ async function parsePage(url) {
     
         const key = groups.key;
         let valueDefault = groups.default ? groups.default.trim() : null;
-        const comment = cleanComment(groups.comment)
+        const comment = groups.comment ? cleanComment(groups.comment) : null;
     
     
         let inputType;
@@ -126,7 +127,7 @@ async function parsePage(url) {
             key: key,
             valueDefault: valueDefault,
             comment: comment,
-            commentHtml: comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;"),
+            commentHtml: comment ? comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;") : null,
             inputType: inputType
         })
     }
