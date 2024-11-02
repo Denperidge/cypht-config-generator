@@ -15,7 +15,24 @@
 </head>
 <body>
     <main>
-        {{form}}
+        {% for option in options %}
+            <fieldset id="{{option.key}}">
+                <legend><h2>{{option.key}}</h2></legend>
+                {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
+                <p>{{option.commentHtml}}</p>
+                <input 
+                    type="{{option.inputType}}"
+                    name="{{option.key}}"
+                    {% if option.valueDefault %}
+                        {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
+                            checked="true"
+                        {% else %}
+                            value="{{option.valueDefault}}"
+                        {% endif %}
+                    {% endif %}
+                />
+            </fieldset>
+        {% endfor %}
     </main>
     <script src="form.js"></script>
 </body>

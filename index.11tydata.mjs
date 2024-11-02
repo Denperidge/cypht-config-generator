@@ -47,8 +47,6 @@ export default async function (configData) {
 
     const appPhp = await cacheOrFetch("https://github.com/cypht-org/cypht/raw/master/config/app.php");
 
-
-    let result = "";
     const matches = appPhp.matchAll(REG);
     let match;
     const array = [];
@@ -116,17 +114,15 @@ export default async function (configData) {
     
         
     
-        // TODO move
-        result += `
-        <fieldset id="${key}">
-            <legend><h2>${key}</h2></legend>
-            ${valueDefault ? `<p>Default: ${valueDefault}</p>` : ""}
-            <p>${comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;")}</p>
-            <input type="${inputType}" name="${key}" ${valueDefault ? (inputType == "checkbox" && valueDefault == "true" ? `checked=${valueDefault}` : `value="${valueDefault}"`) : ""} />
-        </fieldset>
-        `
-        array.push(groups)
+       
+        array.push({
+            key: key,
+            valueDefault: valueDefault,
+            comment: comment,
+            commentHtml: comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;"),
+            inputType: inputType
+        })
     }
     
-    return {form: result}
+    return {options: array}
 }
