@@ -4,11 +4,14 @@ import fs from "fs";
 
 const REG = new RegExp(/\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
 const CACHE_DIR = ".cache/"
+const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "themes.php", "wordpress.php"]
+
 
 fs.mkdirSync(CACHE_DIR, {recursive: true})
 
 // TODO SESSION_CLASS missing
 // TODO API_LOGIN_KEY
+// TODO REDIS_*
 
 /**
  * Messy no-dependency function to either use cache or fetch into cache
@@ -43,11 +46,14 @@ function cleanComment(comment) {
     return commentLines.join("\n");
 }
 
-export default async function (configData) {
-
-    const appPhp = await cacheOrFetch("https://github.com/cypht-org/cypht/raw/master/config/app.php");
-
-    const matches = appPhp.matchAll(REG);
+/**
+ * 
+ * @param {string} page 
+ * @returns {Array<object>}
+ */
+async function parsePage(url) {
+    const page = await cacheOrFetch(url);
+    const matches = page.matchAll(REG);
     let match;
     const array = [];
     while ((match = matches.next()).done !== true) {
@@ -99,7 +105,11 @@ export default async function (configData) {
                 case "API_LOGIN_KEY":
                     inputType = "text";
                     break;
-    
+                
+                case "DB_PASS":  // database.php
+                    inputType = "password";
+                    break;
+                
                 case "DEFAULT_SMTP_PORT":
                     inputType = "number";
                     break;
@@ -112,9 +122,6 @@ export default async function (configData) {
             console.error(valueDefault)
         }
     
-        
-    
-       
         array.push({
             key: key,
             valueDefault: valueDefault,
@@ -123,6 +130,16 @@ export default async function (configData) {
             inputType: inputType
         })
     }
+    return array;
+}
+
+export default async function (configData) {
+    let options = [];
     
-    return {options: array}
+    for (let i=0; i < FILES.length; i++) {
+        const data = await parsePage("https://github.com/cypht-org/cypht/raw/master/config/" + FILES[i]);
+        options = options.concat(data);
+    }
+    
+    return {options: options}
 }

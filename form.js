@@ -39,8 +39,8 @@ function ifValueHideOrShow(value, expected, jqueryElem) {
 
 // On input
 function onInputAuthType(value) {
-    ifValueHideOrShow(value, "LDAP", $("[id^=LDAP_AUTH]"));
-    ifValueHideOrShow(value, "IMAP", $("[id^=IMAP_AUTH]"));    
+    ifValueHideOrShow(value, "LDAP", $("[id^=LDAP_AUTH_]"));
+    ifValueHideOrShow(value, "IMAP", $("[id^=IMAP_AUTH_]"));    
 }
 
 function onInputDefaultSmtpName(value) {
