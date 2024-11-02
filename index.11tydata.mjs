@@ -5,7 +5,7 @@ import fs from "fs";
 const REG = new RegExp(/(\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?)?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
 //const REGEX_DOUBLE_COMMENT = new RegExp(/(?<commentOne>\/\*(.|\n)*?\*\/)( |\n)*?(?<commentTwo>\/\*(.|\n)*?\*\/)/, "g")
 const CACHE_DIR = ".cache/"
-const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "themes.php", "wordpress.php"]
+const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "wordpress.php"]
 
 
 fs.mkdirSync(CACHE_DIR, {recursive: true})
@@ -135,12 +135,14 @@ async function parsePage(url) {
 }
 
 export default async function (configData) {
-    let options = [];
+    const options = {};
     
     for (let i=0; i < FILES.length; i++) {
-        const data = await parsePage("https://github.com/cypht-org/cypht/raw/master/config/" + FILES[i]);
-        options = options.concat(data);
+        const file = FILES[i];
+        const data = await parsePage("https://github.com/cypht-org/cypht/raw/master/config/" + file);
+        options[file] = data;
     }
+
     
-    return {options: options}
+    return {FILES: FILES, options: options}
 }

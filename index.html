@@ -15,24 +15,32 @@
 </head>
 <body>
     <main>
-        {% for option in options %}
-            <fieldset id="{{option.key}}">
-                <legend><h2>{{option.key}}</h2></legend>
-                {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
-                <p>{{option.commentHtml}}</p>
-                <input 
-                    type="{{option.inputType}}"
-                    name="{{option.key}}"
-                    {% if option.valueDefault %}
-                        {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
-                            checked="true"
-                        {% else %}
-                            value="{{option.valueDefault}}"
-                        {% endif %}
-                    {% endif %}
-                />
-            </fieldset>
+        <blockquote>Click any of the options below to configure Cypht!</blockquote>
+        {% for file in FILES %}
+            <details>
+                <summary>{{file | replace: ".php", ""}}</summary>
+                {% for option in options[file] %}
+                    <fieldset id="{{option.key}}">
+                        <legend><h3>{{option.key}}</h3></legend>
+                        {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
+                        <p>{{option.commentHtml}}</p>
+                        <input 
+                            type="{{option.inputType}}"
+                            name="{{option.key}}"
+                            {% if option.valueDefault %}
+                                {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
+                                    checked="true"
+                                {% else %}
+                                    value="{{option.valueDefault}}"
+                                {% endif %}
+                            {% endif %}
+                        />
+                    </fieldset>
+                {% endfor %}
+            </details>
+            <hr>
         {% endfor %}
+
     </main>
     <script src="form.js"></script>
 </body>
