@@ -18,6 +18,8 @@
   "author": "Denperidge",
   "license": "MIT",
   "dependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "@picocss/pico": "^2.0.6",
+    "jquery": "^3.7.1"
   }
 }

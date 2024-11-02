@@ -116,13 +116,13 @@ export default async function (configData) {
     
         
     
-    
+        // TODO move
         result += `
-        <fieldset>
+        <fieldset id="${key}">
             <legend><h2>${key}</h2></legend>
             ${valueDefault ? `<p>Default: ${valueDefault}</p>` : ""}
             <p>${comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;")}</p>
-    <input type="${inputType}" name="${key}" ${valueDefault ? `value="${valueDefault}"` : ""} />
+            <input type="${inputType}" name="${key}" ${valueDefault ? (inputType == "checkbox" && valueDefault == "true" ? `checked=${valueDefault}` : `value="${valueDefault}"`) : ""} />
         </fieldset>
         `
         array.push(groups)
