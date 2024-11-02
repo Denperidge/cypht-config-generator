@@ -1,0 +1,23 @@
+{
+  "name": "cypht-config-generator",
+  "description": "Generate a website to generate a cypht configuration",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "homepage": "https://github.com/Denperidge/cypht-config-generator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Denperidge/cypht-config-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Denperidge/cypht-config-generator/issues"
+  },
+  "author": "Denperidge",
+  "license": "MIT",
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
