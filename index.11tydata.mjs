@@ -4,6 +4,7 @@ import fs from "fs";
 
 const REG = new RegExp(/(\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?)?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
 //const REGEX_DOUBLE_COMMENT = new RegExp(/(?<commentOne>\/\*(.|\n)*?\*\/)( |\n)*?(?<commentTwo>\/\*(.|\n)*?\*\/)/, "g")
+const REGEX_VALID_VALUES = new RegExp(/Valid values.*?\n(?<values>(.|\n)*)/, "g");
 const CACHE_DIR = ".cache/"
 const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "wordpress.php"]
 
@@ -125,13 +126,35 @@ async function parsePage(url) {
             console.error(key)
             console.error(valueDefault)
         }
+
+
+        let setValues = null;
+        if (comment) {
+            const match = REGEX_VALID_VALUES.exec(comment);
+            if (match) {
+                let values = match.groups.values.split("\n")
+                // Manual overrides
+                values = values.filter((val) => !val.startsWith("langauge codes") && !val.startsWith("more info") && !val.startsWith("after colon"))
+                if (values.length > 0) {
+                    setValues = values.map((commentLine) => {
+                        const value = {};
+                        value.value = commentLine.substring(0, commentLine.indexOf(" "));
+                        value.description = commentLine.substring(commentLine.indexOf(" ")).trim()
+                        return value;
+                    })
+                    console.log(setValues)
+                    inputType = "select";
+                }
+            }
+        }
     
         array.push({
             key: key,
             valueDefault: valueDefault,
             comment: comment,
             commentHtml: comment ? comment.replace(/\n/g, "<br>").replace(/ /g, "&nbsp;") : null,
-            inputType: inputType
+            inputType: inputType,
+            setValues: setValues
         })
     }
     return array;

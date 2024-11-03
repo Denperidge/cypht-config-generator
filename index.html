@@ -29,21 +29,31 @@
             <details>
                 <summary>{{file | replace: ".php", ""}}</summary>
                 {% for option in options[file] %}
+                    {% assign select = option.inputType == "select" %}
                     <fieldset id="{{option.key}}">
                         <legend><h3>{{option.key}}</h3></legend>
                         {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
                         <p>{{option.commentHtml}}</p>
-                        <input 
-                            type="{{option.inputType}}"
-                            name="{{option.key}}"
-                            {% if option.valueDefault %}
-                                {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
-                                    checked="true"
-                                {% else %}
-                                    value="{{option.valueDefault}}"
+                        {% if not select %}
+                            <input 
+                                type="{{option.inputType}}"
+                                name="{{option.key}}"
+                                {% if option.valueDefault %}
+                                    {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
+                                        checked="true"
+                                    {% else %}
+                                        value="{{option.valueDefault}}"
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        />
+                            />
+                        {% else %}
+                            <select name="{{option.key}}">
+                                {% for setValue in option.setValues %}
+                                    <option value="{{setValue.value}}">{{setValue.value}} - {{setValue.description}}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+
                     </fieldset>
                 {% endfor %}
             </details>
