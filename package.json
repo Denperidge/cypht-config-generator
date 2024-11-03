@@ -1,8 +1,8 @@
 {
   "name": "cypht-config-generator",
-  "description": "Generate a website to generate a cypht configuration",
+  "description": "A rather self-updatable site to help you configure Cypht instances",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy"
