@@ -142,14 +142,25 @@ async function parsePage(url) {
         let setValues = null;
         if (comment) {
             const match = REGEX_VALID_VALUES.exec(comment);
-            if (key == "AUTH_TYPE") {
-                console.log(comment)
-                console.log(match)
-            }
             if (match) {
-                let values = match.groups.values.split("\n")
-                // Manual overrides
-                values = values.filter((val) => !val.startsWith("langauge codes") && !val.startsWith("more info") && !val.startsWith("after colon") && !val.startsWith("- "))
+                let unfilteredValues = match.groups.values.split("\n")
+                const values = [];
+                let customAdded = false;
+                for (let i = 0; i < unfilteredValues.length; i++) {
+                    const val = unfilteredValues[i];
+                    if (customAdded) {
+                        values.push(values.pop().trim() + " " + val.trim());
+                        continue;
+                    }
+                    // Manual override
+                    if (!val.startsWith("langauge codes")) { 
+                        values.push(val)
+                        // As of now, custom is the last option & tends to have multi-line explanations
+                        if (val.startsWith("custom")) {
+                            customAdded = true;
+                        } 
+                    }
+                }
                 if (values.length > 0) {
                     setValues = values.map((commentLine) => {
                         const value = {};
@@ -157,7 +168,6 @@ async function parsePage(url) {
                         value.description = commentLine.substring(commentLine.indexOf(" ")).trim()
                         return value;
                     })
-                    //console.log(setValues)
                     inputType = "select";
                 }
             }
