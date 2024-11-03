@@ -1,17 +1,16 @@
-//const reg = new RegExp("'.*?'(?= *=>)")
-// const reg2 = env\('(?<key>.*?)'(, (?<default>.*?))?\)
 import fs from "fs";
 
 const REG = new RegExp(/(\/\*(?<comment>(.|\n)*?)\*\/(.|\n)*?)?env\('(?<key>.*?)'(, *?(?<default>.*?))?\)/, "g")
-//const REGEX_DOUBLE_COMMENT = new RegExp(/(?<commentOne>\/\*(.|\n)*?\*\/)( |\n)*?(?<commentTwo>\/\*(.|\n)*?\*\/)/, "g")
-const REGEX_VALID_VALUES = new RegExp(/Valid values.*?\n(?<values>(.|\n)*)/, "g");
+const REGEX_REMOVE_FIRST_COMMENT = new RegExp(/\/\*(.|\n)*?\*\//);
+const REGEX_VALID_VALUES = new RegExp(/Valid values.*?\n(?<values>(.|\n)*)/);
 const CACHE_DIR = ".cache/"
 const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_login.php", "github.php", "ldap.php", "oauth2.php", "recaptcha.php", "wordpress.php"]
 
 
 fs.mkdirSync(CACHE_DIR, {recursive: true})
 
-// TODO ALLOW_SESSION_CACHE & CACHE_CLASS
+// TODO ALLOW_SESSION_CACHE & CACHE_CLASS?
+// TODO DB_SOCKET, USER_SETTINGS_DIR
 
 
 /**
@@ -53,7 +52,14 @@ function cleanComment(comment) {
  * @returns {Array<object>}
  */
 async function parsePage(url) {
-    const page = await cacheOrFetch(url);
+    let page = await cacheOrFetch(url);
+    if (url.endsWith("app.php")) {
+        page = page.replace(REGEX_REMOVE_FIRST_COMMENT, "");
+        fs.writeFileSync(CACHE_DIR + "test.php", page, {encoding: "utf-8"})
+
+    }
+
+
     const matches = page.matchAll(REG);
     let match;
     const array = [];
@@ -112,6 +118,7 @@ async function parsePage(url) {
                 case "DB_PASS":  // database.php
                 case "REDIS_PASS":
                 case "MEMCACHED_PASS":
+                case "APP_2FA_SECRET":  // 2fa.php
                     inputType = "password";
                     break;
                 
@@ -119,6 +126,10 @@ async function parsePage(url) {
                     inputType = "number";
                     break;
             }
+        }
+
+        if (key.includes("SECRET")) {
+            inputType = "password";  
         }
     
         if (inputType === undefined) {
@@ -131,6 +142,10 @@ async function parsePage(url) {
         let setValues = null;
         if (comment) {
             const match = REGEX_VALID_VALUES.exec(comment);
+            if (key == "AUTH_TYPE") {
+                console.log(comment)
+                console.log(match)
+            }
             if (match) {
                 let values = match.groups.values.split("\n")
                 // Manual overrides
@@ -142,7 +157,7 @@ async function parsePage(url) {
                         value.description = commentLine.substring(commentLine.indexOf(" ")).trim()
                         return value;
                     })
-                    console.log(setValues)
+                    //console.log(setValues)
                     inputType = "select";
                 }
             }

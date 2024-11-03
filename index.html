@@ -32,8 +32,8 @@
                     {% assign select = option.inputType == "select" %}
                     <fieldset id="{{option.key}}">
                         <legend><h3>{{option.key}}</h3></legend>
-                        {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
                         <p>{{option.commentHtml}}</p>
+                        {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
                         {% if not select %}
                             <input 
                                 type="{{option.inputType}}"
