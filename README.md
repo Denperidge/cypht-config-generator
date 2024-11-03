@@ -20,3 +20,6 @@ npm start  # Run live server
 npm run build  # Build to dist/
 ```
 
+## License
+This project is licensed under the [MIT License](LICENSE).
+
