@@ -129,7 +129,6 @@ function onClickGenerate(value) {
     const allInputs = $("input, select");
     allInputs.each(function(i) {
         const input = $(this);
-        console.log(input.attr("name"))
         const value = input.attr("type") != "checkbox" ? input.val() : input.is(":checked");
 
         text += `${input.attr("name")}=${value}\n`;
