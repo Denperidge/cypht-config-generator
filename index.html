@@ -9,6 +9,15 @@
         main {
             width: 80%;
             margin: auto;
+            word-break: break-all;
+        }
+        #generate {
+            margin: auto;
+            display: block;
+            margin-bottom: 20px;
+        }
+        #result {
+            height: 600px;
         }
     </style>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -41,6 +50,10 @@
             <hr>
         {% endfor %}
 
+        <hr>
+
+        <button id="generate">Generate .env file</button>
+        <textarea id="result"></textarea>
     </main>
     <script src="form.js"></script>
 </body>

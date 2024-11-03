@@ -3,6 +3,7 @@ function getInput(name) {
     return $(`[name=${name}]`);
 }
 
+const allInputs = $("input");
 const inputAuthType = getInput("AUTH_TYPE");
 const inputDefaultSmtpName = getInput("DEFAULT_SMTP_NAME");
 const inputAllowLongSession = getInput("ALLOW_LONG_SESSION");
@@ -57,6 +58,24 @@ function onInputAllowLongSession(value) {
     ifValueHideOrShow(value, true, $("[id=LONG_SESSION_LIFETIME]"))
 }
 
+function onClickGenerate(value) {
+    let text = "";
+    console.log("length")
+
+    allInputs.each(function(i) {
+        const input = $(this);
+        const value = input.attr("type") != "checkbox" ? input.val() : input.is(":checked");
+
+        text += `${input.attr("name")}=${value}\n`;
+        console.log(text);
+    });
+
+    $("#result").val(text)
+}
+
 setInputAndRun(inputAuthType, onInputAuthType);
 setInputAndRun(inputDefaultSmtpName, onInputDefaultSmtpName);
 setInputAndRun(inputAllowLongSession, onInputAllowLongSession, true);
+
+$("#generate").on("click", onClickGenerate);
+onClickGenerate();
