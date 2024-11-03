@@ -149,7 +149,7 @@ async function parsePage(url) {
             if (match) {
                 let values = match.groups.values.split("\n")
                 // Manual overrides
-                values = values.filter((val) => !val.startsWith("langauge codes") && !val.startsWith("more info") && !val.startsWith("after colon"))
+                values = values.filter((val) => !val.startsWith("langauge codes") && !val.startsWith("more info") && !val.startsWith("after colon") && !val.startsWith("- "))
                 if (values.length > 0) {
                     setValues = values.map((commentLine) => {
                         const value = {};
