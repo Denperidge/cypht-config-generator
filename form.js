@@ -19,10 +19,14 @@ function getInputValue(jqueryElem, checkbox=false) {
  * notifying that changing it will change presented options
  * 
  * @param {JQueryElem} jqueryElem jQuery element to add the label after
- * @param {String} prefix Prefix to add to "in the above input will change other presented options!"
+ * @param {String|Boolean} prefix Prefix to add to "in the above input will change other presented options!".
+ *                                If set to explicitly to false, cancel adding label
+ *                      
  * @default "Entering a value"
  */
 function addExpandLabel(jqueryElem, prefix="Entering a value") {
+    if (prefix === false) return;
+    
     jqueryElem.after(`<small>${prefix} in the above input will change other presented options!</small>`)
 }
 
@@ -39,11 +43,12 @@ function addExpandLabel(jqueryElem, prefix="Entering a value") {
  * @default false
  * @param {String} event which event to attach to
  * @default "input"
- * @param {String|undefined} prefix @see addExpandLabel
+ * @param {String|Boolean|undefined} prefix @see addExpandLabel
  * 
  */
 function setInputAndRun(jqueryElem, func, checkbox=false, event="input", prefix=undefined) {
     addExpandLabel(jqueryElem, prefix);
+    
     jqueryElem.on(event, function(e) {
         func(getInputValue(jqueryElem, checkbox));
     });
@@ -87,6 +92,22 @@ function onlyShowRestIfFirstHasValue(jqueryString) {
     })
 }
 
+/**
+ * Resets jqueryEleemnt to default value. 
+ * 
+ * @param {JQueryElement} jqueryElement what jQuery element to reset the value of. It needs data-default to be set 
+ * @param {Boolean} checkbox whether the jQuery element is a checkbox
+ * @default false
+ */
+function resetInput(jqueryElement, checkbox=false) {
+    if (!checkbox) {
+        jqueryElement.val(jqueryElement.data("default")).change().trigger("input");
+
+    } else {
+        jqueryElement.prop("checked", jqueryElement.data("default")).change().trigger("input");
+    }   
+}
+
 
 /* Specific events */
 
@@ -117,6 +138,25 @@ function onClickGenerate(value) {
     $("#result").val(text)
 }
 
+// Reset button functionality (individual fields)
+function onClickReset(e) {
+    const target = $(e.target);
+    target.siblings("input[type='checkbox']").each(function() {
+        resetInput($(this), true)
+    });
+    target.siblings("input[type!='checkbox'], select").each(function() {
+        resetInput($(this))
+    });
+}
+
+// Reset all functionality
+function onClickResetAll() {
+    if (confirm("Reset all values?")) {
+        $(".reset").each(function() {
+            $(this).trigger("click");
+        })
+    }
+}
 
 /* Main */
 onlyShowRestIfFirstHasValue("[name^=DEFAULT_SMTP_]");
@@ -125,15 +165,9 @@ onlyShowRestIfFirstHasValue("[name^=OUTLOOK_]");
 
 setInputAndRun($("[name=AUTH_TYPE"), onInputAuthType, false, "input", "Selecting LDAP or IMAP");
 setInputAndRun($("[name=ALLOW_LONG_SESSION]"), onInputAllowLongSession, true);
-setInputAndRun($("#generate"), onClickGenerate, false, "click")
+setInputAndRun($("#generate"), onClickGenerate, false, "click", false)
 
-$(".reset").on("click", function(e) {
-    const target = $(e.target);
-    target.siblings("input[type='checkbox']").each(function() {
-        const sibling = $(this);
-        sibling.prop("checked", sibling.data("default"))}).change().trigger("input");
-    target.siblings("input[type!='checkbox'], select").each(function() {
-        const sibling = $(this);
-        sibling.val(sibling.data("default")).change().trigger("input");
-    });
-});
+$(".reset").on("click", onClickReset);
+$("#reset-all").on("click", onClickResetAll);
+
+
