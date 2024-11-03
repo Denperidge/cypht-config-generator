@@ -26,20 +26,28 @@
 </head>
 <body>
     <main>
-        <blockquote>Click any of the options below to configure Cypht!</blockquote>
+        <h1>Cypht Config Generator</h1>
+        <blockquote>
+            Click any of the options below to configure Cypht!<br>
+            On the bottom of the page you can find a button to generate your .env
+        </blockquote>
         {% for file in FILES %}
             <details>
                 <summary role="button">{{file | replace: ".php", ""}}</summary>
                 {% for option in options[file] %}
                     {% assign select = option.inputType == "select" %}
+                    {% assign inputId = option.key |append: "_CCGINPUT" %}
                     <fieldset id="{{option.key}}">
                         <legend><h3>{{option.key}}</h3></legend>
-                        <p>{{option.commentHtml}}</p>
+                        <label for="{{inputId}}">{{option.commentHtml}}</label>
                         {% if option.valueDefault %}<p>Default: {{option.valueDefault}}</p>{% endif %}
+
                         {% if not select %}
                             <input 
+                                id="{{inputId}}"
                                 type="{{option.inputType}}"
                                 name="{{option.key}}"
+                                data-default="{{option.valueDefault}}"
                                 {% if option.valueDefault %}
                                     {% if option.inputType == "checkbox" and option.valueDefault == "true" %}
                                         checked="true"
@@ -49,12 +57,18 @@
                                 {% endif %}
                             />
                         {% else %}
-                            <select name="{{option.key}}">
+                            <select
+                                id="{{inputId}}"
+                                name="{{option.key}}"
+                                data-default="{{option.valueDefault}}"
+                            >
                                 {% for setValue in option.setValues %}
                                     <option value="{{setValue.value}}">{{setValue.value}} - {{setValue.description}}</option>
                                 {% endfor %}
                             </select>
                         {% endif %}
+                        <button class="reset">Reset</button>
+
 
                     </fieldset>
                 {% endfor %}

@@ -126,3 +126,14 @@ onlyShowRestIfFirstHasValue("[name^=OUTLOOK_]");
 setInputAndRun($("[name=AUTH_TYPE"), onInputAuthType, false, "input", "Selecting LDAP or IMAP");
 setInputAndRun($("[name=ALLOW_LONG_SESSION]"), onInputAllowLongSession, true);
 setInputAndRun($("#generate"), onClickGenerate, false, "click")
+
+$(".reset").on("click", function(e) {
+    const target = $(e.target);
+    target.siblings("input[type='checkbox']").each(function() {
+        const sibling = $(this);
+        sibling.prop("checked", sibling.data("default"))}).change().trigger("input");
+    target.siblings("input[type!='checkbox'], select").each(function() {
+        const sibling = $(this);
+        sibling.val(sibling.data("default")).change().trigger("input");
+    });
+});
