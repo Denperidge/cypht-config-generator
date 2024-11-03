@@ -8,17 +8,6 @@ const inputAuthType = getInput("AUTH_TYPE");
 const inputDefaultSmtpName = getInput("DEFAULT_SMTP_NAME");
 const inputAllowLongSession = getInput("ALLOW_LONG_SESSION");
 
-// This needs a better name
-function onlyShowRestIfFirstHasValue(jqueryString) {
-    const first = $(jqueryString + ":first");
-    const otherElements = $(jqueryString + ":not(:first)").parent("fieldset");
-
-    setInputAndRun(first, (value) => {
-        ifValueHideOrShow(value.trim() != "", otherElements);
-    })
-}
-onlyShowRestIfFirstHasValue("[name^=GMAIL]");
-
 // 2: Helper functions
 function setInputAndRun(jqueryElem, func, checkbox=false) {
     jqueryElem.on("input", function(e) {
@@ -41,9 +30,6 @@ function setInputAndRun(jqueryElem, func, checkbox=false) {
 }
 
 function ifValueHideOrShow(boolean, jqueryElem) {
-    console.log(jqueryElem)
-    console.log(boolean)
-    console.log("--")
     if (boolean) {
         jqueryElem.show(400);
     } else {
@@ -55,6 +41,16 @@ function ifValueHideOrShow(boolean, jqueryElem) {
 function onInputAuthType(value) {
     ifValueHideOrShow(value == "LDAP", $("[id^=LDAP_AUTH_]"));
     ifValueHideOrShow(value == "IMAP", $("[id^=IMAP_AUTH_]"));    
+}
+
+// This needs a better name
+function onlyShowRestIfFirstHasValue(jqueryString) {
+    const first = $(jqueryString + ":first");
+    const otherElements = $(jqueryString + ":not(:first)").parent("fieldset");
+
+    setInputAndRun(first, (value) => {
+        ifValueHideOrShow(value.trim() != "", otherElements);
+    })
 }
 
 function onInputDefaultSmtpName(value) {
@@ -73,21 +69,23 @@ function onInputAllowLongSession(value) {
 
 function onClickGenerate(value) {
     let text = "";
-    console.log("length")
 
     allInputs.each(function(i) {
         const input = $(this);
         const value = input.attr("type") != "checkbox" ? input.val() : input.is(":checked");
 
         text += `${input.attr("name")}=${value}\n`;
-        console.log(text);
     });
 
     $("#result").val(text)
 }
 
+// Note: the function is not run for things that only appear in their own module file (e.g. RECAPTCHA, WORDPRESS)
+onlyShowRestIfFirstHasValue("[name^=DEFAULT_SMTP_]");
+onlyShowRestIfFirstHasValue("[name^=GMAIL_]");
+onlyShowRestIfFirstHasValue("[name^=OUTLOOK_]");
+
 setInputAndRun(inputAuthType, onInputAuthType);
-setInputAndRun(inputDefaultSmtpName, onInputDefaultSmtpName);
 setInputAndRun(inputAllowLongSession, onInputAllowLongSession, true);
 
 $("#generate").on("click", onClickGenerate);
