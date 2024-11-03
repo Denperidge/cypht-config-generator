@@ -8,6 +8,16 @@ const inputAuthType = getInput("AUTH_TYPE");
 const inputDefaultSmtpName = getInput("DEFAULT_SMTP_NAME");
 const inputAllowLongSession = getInput("ALLOW_LONG_SESSION");
 
+// This needs a better name
+function onlyShowRestIfFirstHasValue(jqueryString) {
+    const first = $(jqueryString + ":first");
+    const otherElements = $(jqueryString + ":not(:first)").parent("fieldset");
+
+    setInputAndRun(first, (value) => {
+        ifValueHideOrShow(value.trim() != "", otherElements);
+    })
+}
+onlyShowRestIfFirstHasValue("[name^=GMAIL]");
 
 // 2: Helper functions
 function setInputAndRun(jqueryElem, func, checkbox=false) {
@@ -30,8 +40,11 @@ function setInputAndRun(jqueryElem, func, checkbox=false) {
     func(value);
 }
 
-function ifValueHideOrShow(value, expected, jqueryElem) {
-    if (value == expected) {
+function ifValueHideOrShow(boolean, jqueryElem) {
+    console.log(jqueryElem)
+    console.log(boolean)
+    console.log("--")
+    if (boolean) {
         jqueryElem.show(400);
     } else {
         jqueryElem.hide(400);
@@ -40,8 +53,8 @@ function ifValueHideOrShow(value, expected, jqueryElem) {
 
 // On input
 function onInputAuthType(value) {
-    ifValueHideOrShow(value, "LDAP", $("[id^=LDAP_AUTH_]"));
-    ifValueHideOrShow(value, "IMAP", $("[id^=IMAP_AUTH_]"));    
+    ifValueHideOrShow(value == "LDAP", $("[id^=LDAP_AUTH_]"));
+    ifValueHideOrShow(value == "IMAP", $("[id^=IMAP_AUTH_]"));    
 }
 
 function onInputDefaultSmtpName(value) {
@@ -55,7 +68,7 @@ function onInputDefaultSmtpName(value) {
 }
 
 function onInputAllowLongSession(value) {
-    ifValueHideOrShow(value, true, $("[id=LONG_SESSION_LIFETIME]"))
+    ifValueHideOrShow(value == true, $("[id=LONG_SESSION_LIFETIME]"))
 }
 
 function onClickGenerate(value) {
