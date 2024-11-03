@@ -10,9 +10,8 @@ const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_log
 
 fs.mkdirSync(CACHE_DIR, {recursive: true})
 
-// TODO SESSION_CLASS missing
-// TODO API_LOGIN_KEY
-// TODO REDIS_*
+// TODO ALLOW_SESSION_CACHE & CACHE_CLASS
+
 
 /**
  * Messy no-dependency function to either use cache or fetch into cache
@@ -104,10 +103,14 @@ async function parsePage(url) {
                 case "REDIRECT_AFTER_LOGIN":
                 case "AUTH_CLASS":
                 case "API_LOGIN_KEY":
+                case "MEMCACHED_USER":
+                case "SESSION_CLASS":
                     inputType = "text";
                     break;
                 
                 case "DB_PASS":  // database.php
+                case "REDIS_PASS":
+                case "MEMCACHED_PASS":
                     inputType = "password";
                     break;
                 
