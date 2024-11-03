@@ -14,12 +14,24 @@ function getInputValue(jqueryElem, checkbox=false) {
     }
 }
 
+/**
+ * Adds a label under the passed jQuery element,
+ * notifying that changing it will change presented options
+ * 
+ * @param {JQueryElem} jqueryElem jQuery element to add the label after
+ * @param {String} prefix Prefix to add to "in the above input will change other presented options!"
+ * @default "Entering a value"
+ */
+function addExpandLabel(jqueryElem, prefix="Entering a value") {
+    jqueryElem.after(`<small>${prefix} in the above input will change other presented options!</small>`)
+}
 
-// Thanks to https://stackoverflow.com/a/75419102
+// Thanks to https://stackoverflow.com/a/75419102 for the jsdoc notation
 /**
  * Runs provided func with input value as argument when...
  * - Provided event trigger (default: input)
  * - Setting the value
+ * Additionally, it uses addExpandLabel on the element
  * 
  * @param {JQueryElem} jqueryElem what jQuery element to get the value from
  * @param {(value:String|Boolean) => void} func the function to run on event & run. The input value will be passed as first/only argument
@@ -27,9 +39,11 @@ function getInputValue(jqueryElem, checkbox=false) {
  * @default false
  * @param {String} event which event to attach to
  * @default "input"
+ * @param {String|undefined} prefix @see addExpandLabel
  * 
  */
-function setInputAndRun(jqueryElem, func, checkbox=false, event="input") {
+function setInputAndRun(jqueryElem, func, checkbox=false, event="input", prefix=undefined) {
+    addExpandLabel(jqueryElem, prefix);
     jqueryElem.on(event, function(e) {
         func(getInputValue(jqueryElem, checkbox));
     });
@@ -108,6 +122,6 @@ onlyShowRestIfFirstHasValue("[name^=DEFAULT_SMTP_]");
 onlyShowRestIfFirstHasValue("[name^=GMAIL_]");
 onlyShowRestIfFirstHasValue("[name^=OUTLOOK_]");
 
-setInputAndRun($("[name=AUTH_TYPE"), onInputAuthType);
+setInputAndRun($("[name=AUTH_TYPE"), onInputAuthType, false, "input", "Selecting LDAP or IMAP");
 setInputAndRun($("[name=ALLOW_LONG_SESSION]"), onInputAllowLongSession, true);
 setInputAndRun($("#generate"), onClickGenerate, false, "click")

@@ -9,9 +9,7 @@ const FILES = ["app.php", "database.php", "2fa.php", "carddav.php", "dynamic_log
 
 fs.mkdirSync(CACHE_DIR, {recursive: true})
 
-// TODO ALLOW_SESSION_CACHE & CACHE_CLASS?
 // TODO DB_SOCKET, USER_SETTINGS_DIR
-
 
 /**
  * Messy no-dependency function to either use cache or fetch into cache

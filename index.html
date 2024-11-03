@@ -29,7 +29,7 @@
         <blockquote>Click any of the options below to configure Cypht!</blockquote>
         {% for file in FILES %}
             <details>
-                <summary>{{file | replace: ".php", ""}}</summary>
+                <summary role="button">{{file | replace: ".php", ""}}</summary>
                 {% for option in options[file] %}
                     {% assign select = option.inputType == "select" %}
                     <fieldset id="{{option.key}}">
